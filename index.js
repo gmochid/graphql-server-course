@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 const { RESTDataSource } = require('apollo-datasource-rest');
+const { combineResolvers } = require('graphql-resolvers');
 
 class UserAPI extends RESTDataSource {
   constructor() {
@@ -89,16 +90,14 @@ const typeDefs = gql`
   }
 
   type Home {
-    user: User
-    restaurant: Restaurant
+    users: [User]
+    restaurants: [Restaurant]
   }
 
   type Query {
     restaurants: [Restaurant]
     restaurant(id: ID!): Restaurant
-
     home: Home
-
     users: [User]
   }
   
@@ -107,12 +106,18 @@ const typeDefs = gql`
   }
 `;
 
+const getRestaurants = () => restaurants
+const getUsers = (dataSources) => dataSources.userAPI.getUsers()
+
 const resolvers = {
   Query: {
-    restaurants: () => restaurants,
+    restaurants: getRestaurants(),
     restaurant: (source, { id }) => restaurants.filter((restaurant) => id === restaurant.id)[0],
-    home: () => restaurants,
-    users: (source, args, { dataSources }) => dataSources.userAPI.getUsers(),
+    home: (source, args, { dataSources }) => ({
+      restaurants: getRestaurants(),
+      users: getUsers(dataSources),
+    }),
+    users: (source, args, { dataSources }) => getUsers(dataSources),
   },
   Mutation: {
     addRestaurant: (source, args) => {
