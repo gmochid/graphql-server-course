@@ -11,6 +11,10 @@ class UserAPI extends RESTDataSource {
   async getUsers() {
     return this.get('users');
   }
+
+  async getUser(id) {
+    return this.get(`users/${id}`);
+  }
 }
 
 var restaurants = [
@@ -90,8 +94,8 @@ const typeDefs = gql`
   }
 
   type Home {
-    users: [User]
-    restaurants: [Restaurant]
+    users: User
+    recommendation: Restaurant
   }
 
   type Query {
@@ -106,18 +110,15 @@ const typeDefs = gql`
   }
 `;
 
-const getRestaurants = () => restaurants
-const getUsers = (dataSources) => dataSources.userAPI.getUsers()
-
 const resolvers = {
   Query: {
-    restaurants: getRestaurants(),
+    restaurants: () => restaurants,
     restaurant: (source, { id }) => restaurants.filter((restaurant) => id === restaurant.id)[0],
     home: (source, args, { dataSources }) => ({
-      restaurants: getRestaurants(),
-      users: getUsers(dataSources),
+      recommendation: restaurants[0],
+      users: dataSources.userAPI.getUser(1),
     }),
-    users: (source, args, { dataSources }) => getUsers(dataSources),
+    users: (source, args, { dataSources }) => dataSources.userAPI.getUsers(),
   },
   Mutation: {
     addRestaurant: (source, args) => {
