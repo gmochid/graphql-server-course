@@ -94,7 +94,7 @@ const typeDefs = gql`
   }
 
   type Home {
-    users: User
+    user: User
     recommendation: Restaurant
   }
 
@@ -116,7 +116,7 @@ const resolvers = {
     restaurant: (source, { id }) => restaurants.filter((restaurant) => id === restaurant.id)[0],
     home: (source, args, { dataSources }) => ({
       recommendation: restaurants[0],
-      users: dataSources.userAPI.getUser(1),
+      user: dataSources.userAPI.getUser(1),
     }),
     users: (source, args, { dataSources }) => dataSources.userAPI.getUsers(),
   },
