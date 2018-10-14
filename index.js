@@ -15,7 +15,7 @@ class UserAPI extends RESTDataSource {
 var restaurants = [
   {
     id: '1',
-    title: 'GH Corner Semarang',
+    name: 'GH Corner Semarang',
     address: 'E-Plaza',
     phone: '08123456789',
     rating: 5,
@@ -30,7 +30,7 @@ var restaurants = [
   },
   {
     id: '2',
-    title: '3/4 Coworking Space',
+    name: '3/4 Coworking Space',
     address: 'Tembalang',
     phone: '08123456789',
     rating: 5,
@@ -45,7 +45,7 @@ var restaurants = [
   },
   {
     id: '3',
-    title: 'Impala Space',
+    name: 'Impala Space',
     address: 'Kota Lama',
     phone: '08123456789',
     rating: 5,
@@ -73,7 +73,7 @@ const typeDefs = gql`
 
   type Restaurant {
     id: ID
-    title: String
+    name: String
     address: String
     phone: String
     rating: Int
@@ -103,7 +103,7 @@ const typeDefs = gql`
   }
   
   type Mutation {
-    addRestaurant(id: ID, title: String, address: String): Restaurant
+    addRestaurant(name: String, address: String): Restaurant
   }
 `;
 
@@ -116,10 +116,10 @@ const resolvers = {
   },
   Mutation: {
     addRestaurant: (source, args) => {
-      const { id, title, address } = args;
+      const { name, address } = args;
       const newRestaurant = {
         id: restaurants.length.toString(),
-        title,
+        name,
         address,
       }
       restaurants = [...restaurants, newRestaurant]
